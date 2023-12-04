@@ -1,4 +1,5 @@
 <?php
+include __DIR__ ."/Genre.php";
 class Movie
 {
     private int $id;
@@ -8,7 +9,9 @@ class Movie
     private string $poster_path;
     private string $original_language;
 
-    function __construct($id, $title, $overview, $vote, $poster_path, $original_language)
+    public $genre;
+
+    function __construct($id, $title, $overview, $vote, $poster_path, $original_language, $genre)
     {
         $this->id = $id;
         $this->title = $title;
@@ -16,6 +19,7 @@ class Movie
         $this->vote_average = $vote;
         $this->poster_path = $poster_path;
         $this->original_language = $original_language;
+        $this->genre = $genre;
     }
     
     public function printCard()
@@ -24,6 +28,7 @@ class Movie
         $title = $this->title;
         $content = $this->overview;
         $custom = $this->vote_average;
+        $genre = $this->genre;
         include __DIR__ . "/../Views/card.php";
     }
 }
@@ -31,6 +36,13 @@ class Movie
 $movieString = file_get_contents(__DIR__ . '/movie_db.json');
 $movieList = json_decode($movieString, true);
 $movies = [];
-foreach ($movieList as $item) {
-    $movies[] = new Movie($item['id'], $item['title'], $item['overview'], $item['vote_average'], $item['poster_path'], $item['original_language']);
+$genreString = file_get_contents(__DIR__ . '/genre_db.json');
+$genreList = json_decode($genreString, true);
+$genres = [];
+foreach ($genreList as $genre){
+    array_push( $genres, $genre);
 }
+foreach ($movieList as $item) {
+    $movies[] = new Movie($item['id'], $item['title'], $item['overview'], $item['vote_average'], $item['poster_path'], $item['original_language'], $genres[rand(0,count($genres)-1)]);
+}
+?>
